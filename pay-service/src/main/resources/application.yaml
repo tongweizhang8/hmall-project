@@ -1,0 +1,18 @@
+server:
+  port: 8084
+feign:
+  sentinel:
+    enabled: true #开启减级熔断功能
+  okhttp:
+    enabled: true # 开启OKHttp功能
+
+hm:
+  swagger:
+    title: 支付服务接口文档
+    desc: "支付服务接口文档"
+    package: com.hmall.pay.controller
+    gn: 支付服务接口文档
+  db:
+    host: 192.168.206.128
+    port: 3306
+    database: hm-pay

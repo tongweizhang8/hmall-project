@@ -1,0 +1,18 @@
+server:
+  port: 8081
+feign:
+  sentinel:
+    enabled: true #开启减级熔断功能
+  okhttp:
+    enabled: true # 开启OKHttp功能
+
+hm:
+  swagger:
+    title: 商品服务接口文档
+    desc: "商品服务接口文档"
+    package: com.hmall.item.controller
+    gn: 商品服务接口文档
+  db:
+    host: 192.168.206.128
+    port: 3306
+    database: hm-item

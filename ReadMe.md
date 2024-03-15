@@ -1,0 +1,21 @@
+cart-service：有nacos的配置信息包括bootstrap.yaml和application.yaml信息来共享配置的实例
+
+服务保护的测试实例sentinel
+
+**hm-api**：各个微服务要想互相调用就得使用openFeign技术，需要在启动类加上@EnableFeignClients(basePackages = "com.hmall.api.client", defaultConfiguration = DefaultFeignConfig.class)，defaultConfiguration是openFeign的配置类，我们需要通过api中client包下的不同client来写出需要互相调用的方法，跟controller相似，只是要Get，Put要写出详细的网址，这样就可以通过openFeign来帮助我们完成调用。
+
+在购物车测试中拒绝线程后返回的信息就要使用fallback,使用fallback需要实现FallbackFactory<XXClient>具体在ItemClientFallback下，将对应的Client方法重写并抛出异常，注意要在对应的Client加上已经实现好的类@FeignClient(fallbackFactory = ItemClientFallback.class)，注意还是需要在配置类中加上bean方法public ItemClientFallback itemClientFallback(){return new ItemClientFallback();}
+
+hm-common：网关配置的拦截器配置，通过响应头来将获取用户信息并保存domain类中来发送给各个微服务，重点：
+
+1、即时配置了，但各个微服务之间还是无法使用用户信息，需要结合openFeign里的RequestInterceptor接口（放在hm-api下的config类的DefaultFeignConfig中的user..方法。
+
+2、因为微服务无法识别拦截器的配置，所以不仅要在各个微服务依赖common，还需要再common中把配置文件添加到resources目录下的META-INF/spring.factories中。
+
+3、因为各个微服务得到拦截器的配置但又因为拦截器和过滤器的底层实现不同会导致过滤器无法启动，所以我们要在配置文件中过滤到过滤器，使用@ConditionalOnClass(DispatcherServlet.class),因为DispatcherServlet.class是微服务特有的类。
+
+hm-gateway：网关配置中的过滤器配置,过滤用户是否登录和保存用户信息到响应头,以便后面微服务来获取信息
+
+item-service:在通过购物车测试QPS、熔断和并发技术前需要在queryItemByIds开启线程Sleep
+
+trade-service：分布式事务测试，createOrder
